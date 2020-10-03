@@ -675,6 +675,7 @@ class CanvasRenderer {
       if (myPlanet && to !== from) {
         this.drawLine(from, to, 2);
         let effectiveEnergy = myPlanet.energy;
+        const fleetSpeedMultiplier = myPlanet.speed / 100;
         for (const unconfirmedMove of myPlanet.unconfirmedDepartures) {
           effectiveEnergy -= unconfirmedMove.forces;
         }
@@ -683,13 +684,19 @@ class CanvasRenderer {
           effectiveEnergy;
 
         const dist = Math.sqrt((from.x - to.x) ** 2 + (from.y - to.y) ** 2);
-
+        const fleetMovementTimeEstimate = dist * fleetSpeedMultiplier;
         const myAtk: number = moveShipsDecay(shipsMoved, myPlanet, dist);
         if (!uiManager.getHoveringOverPlanet()) {
           this.drawText(
             `Energy: ${Math.round(myAtk)}`,
             15,
             { x: to.x, y: to.y },
+            myAtk > 0 ? 'white' : 'red'
+          );
+          this.drawText(
+            `Estimated Arrival Time: ${Math.round(fleetMovementTimeEstimate)}`,
+            15,
+            { x: to.x, y: to.y + 5 },
             myAtk > 0 ? 'white' : 'red'
           );
         }
